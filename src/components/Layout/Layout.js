@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useRef, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import logo from '../Images/Sitelogo.jpeg'
-import { AUTHENTICATION_ROUTES } from '../Authentication/Routingconst'
-import { AUTHORIZATION_ROUTES } from '../Authentication/Routingconst'
+import logo from '../../Images/Sitelogo.jpeg'
+import { AUTHENTICATION_ROUTES } from '../../Authentication/Routingconst'
+import { AUTHORIZATION_ROUTES } from '../../Authentication/Routingconst'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faInstagram, faYoutube } from '@fortawesome/free-brands-svg-icons'
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons'
@@ -36,20 +36,15 @@ function Layout() {
   }, [])
 
   function AUTHENTICATION_ROUTES_Navigate(value) {
-    if (isLogin) {
-      navigate(value.route)
-    }
-    else {
-      alert('login first')
-    }
-
+    // if (isLogin) {
+    navigate(value.route)
+    // }
   }
 
   function AUTHORIZATION_ROUTES_Navigate(value) {
-    if (isLogin) {
-      navigate('/Dashboard')
-    }
+
     navigate(value.route)
+
   }
 
   function handleLogOut() {
@@ -86,7 +81,7 @@ function Layout() {
 
               <FontAwesomeIcon className='md:hidden h-[18px] w-[18px] pr-[16px] pt-[16px] absolute left-[30px] top-[24px]' onClick={(e) => handleNavToggle(e)} icon={faBars} />
 
-              <ul className={'font-semibold md:text-[16px] text-[18px] md:flex flex-col md:flex-row gap-6 md:gap-10 md:text-white text-black md:px-[30px] md:py-[10px] pb-[30px] pt-[40px] pr-[25px] pl-[20px] md:bg-transparent ' + `${togglenav ? 'bg-white flex' : 'hidden'}`}>
+              <ul className={`font-semibold md:text-[16px] text-[18px] md:flex flex-col md:flex-row gap-6 md:gap-10 md:text-white text-black md:px-[30px] md:py-[10px] pb-[30px] pt-[40px] pr-[25px] pl-[20px] md:bg-transparent  + ${togglenav ? 'bg-white flex' : 'hidden'}`}>
                 {AUTHENTICATION_ROUTES.map((Value, index) => {
                   return <li onClick={() => AUTHENTICATION_ROUTES_Navigate(Value)} className='cursor-pointer px-[10px] py-[5px] border-b-transparent hover:border-b-[2px] hover:border-b-white border-b-[2px] ' key={Value.id}>{Value.title}</li>
                 })
