@@ -2,3 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+  :root{
+    --color-primary: rgb(21 119 205);
+  }

@@ -3,25 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { useDispatch, useSelector } from 'react-redux';
+import { action } from '../Store/Slices/DashboardSlice';
 
 function Dashboard() {
 
-  const navigate = useNavigate();
-
-  function handleLogOut() {
-    navigate('/Login');
-    localStorage.clear();
-  }
-
+  const blogData = useSelector((state) => state.BlogItem);
+  const dispatch = useDispatch();
   const formData = useRef();
-  const [blog, setBlog] = useState([]);
   const [editBlog, setEditBlog] = useState(false);
+
 
   function handleSubmit(e) {
 
     const date = new Date();
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const todaydate = date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+
     e.preventDefault();
     const form = formData.current;
     const file = form['image'].files?.[0];
@@ -32,7 +30,7 @@ function Dashboard() {
       date: todaydate,
       isExpanded: false
     }
-    setBlog([...blog, addingblog]);
+    dispatch(action.setBlogItem(addingblog))
     form['title'].value = '';
     form['blog-detail'].value = '';
     form['image'].value = null;
@@ -40,59 +38,45 @@ function Dashboard() {
 
 
   function handleDelete(index) {
-    const blogdata = [...blog];
-    blogdata.splice(index, 1);
-    setBlog(blogdata)
+    dispatch(action.deleteBlog({ index }))
   }
 
   const editBlogIndex = useRef();
 
-
   function handleEdit(index) {
-    const blogdata = [...blog];
-    const form = formData.current;
-    let file = form['image'].files?.[0];
-    blogdata.filter((val, ind) => {
+    setEditBlog(true);
+    blogData.forEach((val, ind) => {
+      const form = formData.current;
       if (ind === index) {
         form['title'].value = val.blogTitle;
         form['blog-detail'].value = val.blogdetail;
-        console.log(val.image)
         editBlogIndex.current = index;
-        console.log(editBlogIndex.current)
       }
     })
-    setEditBlog(true);
   }
 
 
   function handleEditBlog() {
     const form = formData.current;
-    const blogdata = [...blog];
     const file = form['image'].files?.[0];
 
-    blogdata[editBlogIndex.current].blogTitle = form['title'].value;
-    blogdata[editBlogIndex.current].blogdetail = form['blog-detail'].value;
-    blogdata[editBlogIndex.current].image = file ? URL.createObjectURL(file) : blogdata[editBlogIndex.current].image;
+    const editValue = {
+      index: editBlogIndex.current,
+      blogTitle: form['title'].value,
+      blogdetail: form['blog-detail'].value,
+      image: file ? URL.createObjectURL(file) : blogData[editBlogIndex.current].image
+    }
+    dispatch(action.editBlog(editValue));
 
     form['title'].value = '';
     form['blog-detail'].value = '';
     form['image'].value = null;
 
-    setBlog(blogdata);
     setEditBlog(false);
   }
 
   function handleExpanding(index) {
-    const blogdata = [...blog];
-
-    for (let i = 0; i < blogdata.length; i++) {
-      if (index === i) {
-        continue;
-      }
-      blogdata[i].isExpanded = false;
-    }
-    blogdata[index].isExpanded = !blogdata[index].isExpanded;
-    setBlog(blogdata)
+    dispatch(action.handleExpanding({ index }))
   }
 
   return (
@@ -127,7 +111,7 @@ function Dashboard() {
 
           <div className='flex flex-col items-start'>
             <div className='grid grid-cols-1  2xl:grid-cols-2 gap-10'>
-              {blog.map((value, index) => {
+              {blogData.map((value, index) => {
                 return <div className='w-fit bg-[#ffffffe6] p-[30px] bg-white flex flex-col md:flex-row gap-6 content-start '>
                   <img src={value.image} alt="" srcset="" className='object-contain min-w-[200px] h-[200px]' />
                   <div className=' flex flex-col gap-3'>
@@ -135,7 +119,7 @@ function Dashboard() {
                       <span>{value?.date}</span>
                       <h1 className='text-[22px] font-semibold'>{value?.blogTitle}</h1>
                       {/* 'text-[14px] break-words ' */}
-                      <p className={value?.isExpanded ? ('text-[14px] break-words h-full') : ('text-[14px] break-words h-[20px] overflow-hidden')}>{value?.blogdetail} </p><span className='font-bold cursor-pointer' onClick={() => handleExpanding(index)}>{value.isExpanded ? 'Read less' : 'Read more'}</span>
+                      <p className={value?.isExpanded ? ('text-[14px] break-words h-full') : ('text-[14px] break-words h-[20px] overflow-hidden')}>{value?.blogdetail} </p><span className='font-bold cursor-pointer' onClick={() => handleExpanding(index)}>{value?.isExpanded ? 'Read less' : 'Read more'}</span>
                     </div>
                     <div className='flex flex-row gap-1'>
                       <button className=' py-[2px] px-[4px]' onClick={() => handleDelete(index)}><FontAwesomeIcon icon={faTrash} /></button>

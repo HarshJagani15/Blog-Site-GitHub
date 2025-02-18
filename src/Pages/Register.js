@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link, redirect, useNavigate } from 'react-router-dom';
 import img from '../Images/blog.jpg'
 
@@ -6,7 +6,6 @@ function Register() {
 
   const registerform = useRef();
   const navigate = useNavigate();
-
   const [error, setError] = useState();
 
   const validateForm = (data) => {
